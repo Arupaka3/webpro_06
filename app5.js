@@ -27,10 +27,11 @@ app.get("/luck", (req, res) => {
   res.render( 'luck', {number:num, luck:luck} );
 });
 
+
+let win =0;
+let total = 0;
 app.get("/janken", (req, res) => {
   let hand = req.query.hand;
-  let win = Number( req.query.win );
-  let total = Number( req.query.total );
   console.log( {hand, win, total});
   const num = Math.floor( Math.random() * 3 + 1 );
   let cpu = '';
@@ -40,17 +41,19 @@ app.get("/janken", (req, res) => {
  // ここに勝敗の判定を入れる
   // 今はダミーで人間の勝ちにしておく
 let judgement = '';
-if( hand==cpu )
+if
+  ( hand==cpu ){
   judgement='引き分け';
-else if (  hand == 'パー' && cpu == 'グー' ||
+}else if 
+  (  hand == 'パー' && cpu == 'グー' ||
   hand == 'チョキ' && cpu == 'パー' ||
-  hand == 'グー' && cpu == 'チョキ' )
+  hand == 'グー' && cpu == 'チョキ' ){
   judgement='勝ち';
-  else
-    judgement='負け';
-  
   win += 1;
-  total += 1;  
+}else{
+    judgement='負け';
+
+}total += 1;  
   const display = {
     your: hand,
     cpu: cpu,
@@ -59,6 +62,82 @@ else if (  hand == 'パー' && cpu == 'グー' ||
     total: total
   }
   res.render( 'janken', display );
+});
+
+app.get("/ga", (req, res) => {
+  let hand = req.query.hand;
+  console.log( {hand, win, total});
+  const num = Math.floor( Math.random() * 15 + 1 );
+  let ga = '○';
+  if( num==1 ) ga = '☓';
+  else if( num==2 ) ga = '△';
+  else if( num==3 ) ga = '□';
+ // ここに勝敗の判定を入れる
+  // 今はダミーで人間の勝ちにしておく
+let judgement = '';
+if
+  ( hand==ga ){
+  judgement='星☆ スライム';
+}else if 
+  (  hand == '○' && ga == '☓' ||
+  hand == '☓' && ga == '□' ||
+  hand == '△' && ga == '○' ||
+  hand == '□' && ga == '△' ){
+  judgement='星☆☆☆☆ 中級魔術師';
+}else if 
+ (  hand == '○' && ga == '□' ||
+  hand == '☓' && ga == '△' ||
+  hand == '□' && ga == '○' ||
+  hand == '△' && ga == '☓' ){
+  judgement='星☆☆☆ 上級ゴブリン';
+}else{
+    judgement='星☆☆☆☆☆☆☆☆☆ ミラボレアス';
+
+}
+  const display = {
+    your: hand,
+    ga: ga,
+    judgement: judgement,
+    win: win,
+    total: total
+  }
+  res.render( 'ga', display );
+});
+
+
+
+app.get("/ppap", (req, res) => {
+  let hand = req.query.hand;
+  console.log( {hand, win, total});
+  const num = Math.floor( Math.random() * 3 + 1 );
+  let cpu = '';
+  if( num==1 ) cpu = 'Apple';
+  else if( num==2 ) cpu = 'Pineapple';
+  else cpu = 'pen';
+ // ここに勝敗の判定を入れる
+  // 今はダミーで人間の勝ちにしておく
+let judgement = '';
+if 
+  (  hand == 'pen' && cpu == 'pineapple' ||
+  hand == 'Apple' && cpu == 'pen' ||
+  hand == 'Pineapple' && cpu == 'pen' ){
+  judgement= hand+ ' ' +cpu;
+}else if
+( hand==cpu ){
+judgement= 'pen-pineapple-Apple-pen';
+
+}else{
+    judgement='Apple-pen-Pineapple-pen';
+
+}
+  const display = {
+    your: hand,
+    cpu: cpu,
+    judgement: judgement,
+    win: win,
+    total: total
+  }
+  res.render( 'ppap', display );
 });
 
 app.listen(8080, () => console.log("Example app listening on port 8080!"));

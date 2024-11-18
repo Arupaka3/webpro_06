@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ga">
+<head>
+    <meta charset="UTF-8">
+    <title>ガチャガチャ</title>
+    <div class="container">
+        <div class="item"></div>
+      </div>
+    <style>
+        p{
+            font-size: 50px;
+            text-align:center;
+        }
+        
+        
+        
+        </style>
+
+</head>
+<body>
+    <p>あなたが選択したのは<%= your %>です．</p>
+    <p>出現したのは：<%= judgement %></p>
+    <div class="container">
+    <form action="/ga" class="centered-form">
+        <h1>△, ○, □, ☓の中から一つ選んで入力しよう！</h1>
+        <label for="hand"><input type="text" placeholder="入力" name="hand" required>
+        </label>
+        <input type="submit" value="Send">
+        
+    
+    </form>
+</div> 
+</body>
+</html>
