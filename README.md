@@ -112,4 +112,37 @@ loose --> end1
 | public/ppap.html | ppap の開始画面             |
 | ppap.ejs         | ppap のテンプレートファイル |
 
-11/18
+## 2． ラーメン機能について
+
+1. `app5.js` を起動する
+1. Web ブラウザで `localhost:8080/public/noo.html` にアクセスする
+1. 自分の気分を入力する
+
+### このプログラムについて
+
+```mermaid
+flowchart TD;
+
+start["開始"];
+end1["終了"]
+node1[普通, あんまり, いい感じ, やばい, 最高, 物足りないのどれかを入力]
+if{"条件に合うか"}
+win["条件に合ったラーメンが表示される"]
+loose["醤油ラーメンが出る"]
+
+start --> node1 --> if
+if -->|yes| win
+win --> end1
+if -->|no| loose
+loose --> end1
+```
+
+### ファイル一覧
+
+| ファイル名      | 説明                       |
+| --------------- | -------------------------- |
+| app5.js         | プログラム本体             |
+| public/noo.html | noo の開始画面             |
+| noo.ejs         | noo のテンプレートファイル |
+
+12/27
