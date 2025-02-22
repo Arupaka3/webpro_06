@@ -99,14 +99,10 @@ app.post("/read", (req, res) => {
 app.post("/post", (req, res) => {
   const name = req.body.name;
   const message = req.body.message;
-  const parentId = req.body.parentId || null;
-  const timestamp = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }); 
-  console.log( [bbs.length, name, message, timestamp, parentId] );
+  console.log( [name, message] );
   // 本来はここでDBMSに保存する
-  bbs.push( {Id: bbs.length, name: name, message: message, timestamp: timestamp, parentId: parentId });
+  bbs.push( { name: name, message: message } );
   res.json( {number: bbs.length } );
 });
-
-
 
 app.listen(8080, () => console.log("Example app listening on port 8080!"));

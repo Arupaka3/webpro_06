@@ -2,38 +2,33 @@
 
 let number = 0;
 const bbs = document.querySelector('#bbs');
-const updateInterval = 5000; // リアルタイム更新間隔（ミリ秒）
 
 document.querySelector('#post').addEventListener('click', () => {
     const name = document.querySelector('#name').value;
     const message = document.querySelector('#message').value;
-
     const params = {
         method: "POST",
-        body: 'name=' + encodeURIComponent(name) + '&message=' + encodeURIComponent(message),
+        body: 'name=' + name + '&message=' + message,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
+    console.log( params );
     const url = "/post";
-    fetch(url, params)
-        .then(response => {
+    fetch( url, params )
+        .then((response) => {
             if (!response.ok) {
                 throw new Error('Error');
             }
             return response.json();
         })
-        .then(response => {
-            console.log(response);
+        .then((response) => {
+            console.log( response );
             document.querySelector('#message').value = "";
         });
 });
 
-document.querySelector('#check').addEventListener('click', updateMessages);
-
-
-
-function updateMessages() {
+document.querySelector('#check').addEventListener('click', () => {
     const params = {
         method: "POST",
         body: '',
@@ -42,135 +37,122 @@ function updateMessages() {
         }
     };
     const url = "/check";
-    fetch(url, params)
-        .then(response => {
+    fetch( url, params )
+        .then((response) => {
             if (!response.ok) {
                 throw new Error('Error');
             }
             return response.json();
         })
-        .then(response => {
+        .then((response) => {
             let value = response.number;
-            if (number !== value) {
+            console.log( value );
+            
+            console.log( number );
+            if (number != value) {
                 const params = {
                     method: "POST",
                     body: 'start=' + number,
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
-                };
+                }
                 const url = "/read";
-                fetch(url, params)
-                    .then(response => {
+                fetch( url, params )
+                .then( (response) => {
                         if (!response.ok) {
                             throw new Error('Error');
                         }
                         return response.json();
                     })
-                    .then(response => {
+                    .then((response) => {
                         number += response.messages.length;
                         for (let mes of response.messages) {
-                            createPostElement(mes);
+                            console.log( mes ); 
+                            
+                            let cover = document.createElement('div');
+                            cover.className = 'cover';
+
+                            let time_area = document.createElement('span');
+                            time_area.className = 'time';
+                            time_area.innerText = `[${mes.timestamp}]`;
+                            
+                            let name_area = document.createElement('span');
+                            name_area.className = 'name';
+                            name_area.innerText = mes.name;
+                            
+                            let mes_area = document.createElement('span');
+                            mes_area.className = 'mes';
+                            mes_area.innerText = mes.message;
+                            
+                            let reply_button = document.createElement('button');
+                            reply_button.className = 'reply';
+                            reply_button.innerText = '返信';
+                            reply_button.addEventListener('click', () => showReplyInput(mes.id));
+
+                            cover.appendChild(time_area);
+                            cover.appendChild(name_area);
+                            cover.appendChild(mes_area);
+                            cover.appendChild(reply_button); 
+                            bbs.appendChild(cover);
                         }
-                    });
+                    })
             }
         });
-}
-function rateMessage(id, type) {
-    const params = {
-        method: "POST",
-        body: 'id=' + encodeURIComponent(id) + '&type=' + encodeURIComponent(type),
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    };
-    const url = "/rate";
-    fetch(url, params)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error');
-            }
-            return response.json();
-        })
-        .then(response => {
-            if (response.success) {
-                alert('評価を送信しました');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('評価送信に失敗しました');
-        });
+});
+function showReplyInput(parentId) {
+    let oldInput = document.querySelector('#reply-container');
+    if (oldInput) {
+        oldInput.remove();
+    }
+
+    let replyContainer = document.createElement('div');
+    replyContainer.id = 'reply-container';
+
+    let replyInput = document.createElement('input');
+    replyInput.type = 'text';
+    replyInput.placeholder = '返信を入力';
+    replyInput.id = 'reply-message';
+
+    let replySubmit = document.createElement('button');
+    replySubmit.innerText = '送信';
+    replySubmit.addEventListener('click', () => sendReply(parentId));
+
+    replyContainer.appendChild(replyInput);
+    replyContainer.appendChild(replySubmit);
+
+    bbs.appendChild(replyContainer);
 }
 
-
-function createPostElement(mes) {
-    let cover = document.createElement('div');
-    cover.className = 'cover';
-
-    let nameArea = document.createElement('span');
-    nameArea.className = 'name';
-    nameArea.innerText = mes.name;
-
-    let mesArea = document.createElement('span');
-    mesArea.className = 'mes';
-    mesArea.innerText = mes.message;
-
-    let ratingArea = document.createElement('span');
-    ratingArea.className = 'rating';
-    ratingArea.innerText = `👍 ${mes.highRating} / 👎 ${mes.lowRating}`;
-
-    let highRatingButton = document.createElement('button');
-    highRatingButton.className = 'high-rating';
-    highRatingButton.innerText = '👍';
-   
+// 返信を送信
+function sendReply(parentId) {
+    const name = document.querySelector('#name').value;
+    const message = document.querySelector('#reply-message').value;
     
-    let lowRatingButton = document.createElement('button');
-    lowRatingButton.className = 'low-rating';
-    lowRatingButton.innerText = '👎';
-
-    let deleteButton = document.createElement('button');
-    deleteButton.className = 'delete';
-    deleteButton.innerText = '削除';
-    deleteButton.addEventListener('click', () => deletePost(mes.id));
-
-    cover.appendChild(nameArea);
-    cover.appendChild(mesArea);
-    cover.appendChild(ratingArea);
-    cover.appendChild(highRatingButton);
-    cover.appendChild(lowRatingButton);
-    cover.appendChild(deleteButton);
-
-    bbs.appendChild(cover);
-}
-
-function deletePost(id) {
+    if (!message) return; // 空メッセージを防ぐ
     const params = {
         method: "POST",
-        body: 'id=' + encodeURIComponent(id),
+        body: 'name=' + name + '&message=' + message + '&parentId=' + parentId,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
-    const url = "/delete";
-    fetch(url, params)
-        .then(response => {
+    
+    fetch("/post", params)
+        .then((response) => {
             if (!response.ok) {
                 throw new Error('Error');
             }
             return response.json();
         })
-        .then(response => {
-            if (response.success) {
-                alert('削除しました');
-                updateMessages(); // 更新して削除を反映
-            }
+        .then((response) => {
+            console.log(response);
+            document.querySelector('#reply-container').remove(); // 返信フォームを削除
         });
 }
 
-// リアルタイム更新機能
-setInterval(updateMessages, updateInterval);
-
-
+setInterval(() => {
+    document.querySelector('#check').click();
+}, 1000);
 
 
