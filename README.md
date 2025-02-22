@@ -145,4 +145,22 @@ loose --> end1
 | public/noo.html | noo の開始画面             |
 | noo.ejs         | noo のテンプレートファイル |
 
-12/27
+12/27 ##　フローチャー
+
+```mermaid
+flowchart TD;
+sequenceDiagram
+    ブラウザ->>サーバ: Webページを取得
+    サーバ-->>ブラウザ: HTML, JS, CSS
+    ブラウザ->>BBSクライアント: 起動
+    BBSクライアント->>BBSサーバ: 投稿 (Post)
+    BBSサーバ-->>BBSクライアント: 全書き込み数を返す
+    BBSクライアント->>BBSサーバ: 読み込み (Read)
+    BBSサーバ-->>BBSクライアント: 投稿データを送信
+    BBSクライアント->>BBSサーバ: 新規チェック (Check)
+    BBSサーバ-->>BBSクライアント: 全書き込み数を返す
+    BBSクライアント->>BBSサーバ: 返信 (Post Reply)
+    BBSサーバ-->>BBSクライアント: 返信データを保存
+    BBSクライアント->>BBSサーバ: 返信の読み込み
+    BBSサーバ-->>BBSクライアント: スレッド付き返信データを送信
+```
